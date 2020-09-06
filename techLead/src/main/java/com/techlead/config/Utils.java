@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import javax.validation.ConstraintViolationException;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -15,7 +17,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 
 @Component
 public class Utils {
-
 
 	public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
 
@@ -34,17 +35,18 @@ public class Utils {
 		final Claims claims = getAllClaimsFromToken(token);
 		return claimsResolver.apply(claims);
 	}
+
 	private Claims getAllClaimsFromToken(String token) {
 		return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
 	}
 
-	//check life of token
+	// check life of token
 	private Boolean isTokenExpired(String token) {
 		final Date expiration = getExpirationDateFromToken(token);
 		return expiration.before(new Date());
 	}
 
-	//create token
+	// create token
 	public String generateToken(UserDetails userDetails) {
 		Map<String, Object> claims = new HashMap<>();
 		return doGenerateToken(claims, userDetails.getUsername());
@@ -57,9 +59,32 @@ public class Utils {
 				.signWith(SignatureAlgorithm.HS512, secret).compact();
 	}
 
-	//validate token
+	// validate token
 	public Boolean validateToken(String token, UserDetails userDetails) {
 		final String username = getUsernameFromToken(token);
 		return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+	}
+
+	// validate rut
+	public Boolean validateRut(String rut) {
+		try {
+			rut = rut.toUpperCase();
+			// replace . , -
+			rut = rut.replace(".", "").replace(",", "").replace("-", "");
+			Integer numbers = Integer.parseInt(rut.substring(0, rut.length() - 1));
+			char dv = rut.charAt(rut.length() - 1);
+
+			// validate
+			int x = 0, i = 1;
+			for (; numbers != 0; numbers /= 10) {
+				i = (i + numbers % 10 * (9 - x++ % 6)) % 11;
+			}
+			if (dv == (char) (i != 0 ? i + 47 : 75)) {
+				return true;
+			}
+		} catch (Exception e) {
+			throw new ConstraintViolationException("Invalid Rut", null);
+		}
+		return false;
 	}
 }
