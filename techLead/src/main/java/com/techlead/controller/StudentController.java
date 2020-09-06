@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,13 +38,13 @@ public class StudentController {
 	
 	
 	@GetMapping(value = "students", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Iterable<Student>> getAll() {
+	public ResponseEntity<Iterable<Student>> getAll(@RequestHeader(value="Accept") String acceptHeader) {
 		return new ResponseEntity<Iterable<Student>>(studenteRepo.findAll(), HttpStatus.OK);
 	}
 	
 
 	@GetMapping(value = "students/{rut}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Student> getStudentById(@PathVariable String rut) {
+	public ResponseEntity<Student> getStudentById(@PathVariable String rut, @RequestHeader(value="Accept") String acceptHeader) {
 		Student rsp = studenteRepo.findByRut(rut);
 		Optional<Student> opt = Optional.ofNullable(rsp);
 		if(!opt.isPresent()) {
@@ -52,8 +53,8 @@ public class StudentController {
 		return new ResponseEntity<Student>(rsp, HttpStatus.OK);
 	}	
 	
-	@PostMapping(value = "students")
-	public ResponseEntity<List<JSONObject>> saveAll(@Valid @RequestBody StudentWrapper studentWrapper) {
+	@PostMapping(value = "students", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<JSONObject>> saveAll(@Valid @RequestBody StudentWrapper studentWrapper, @RequestHeader(value="Accept") String acceptHeader) {
 		try {
 			for (Student student : studentWrapper.getStudents()) {
 				studenteRepo.save(student);
@@ -66,8 +67,8 @@ public class StudentController {
 		return new ResponseEntity<List<JSONObject>>(HttpStatus.CREATED);
 	}
 	
-	@PutMapping(value = "students/{rut}")
-	public ResponseEntity<List<JSONObject>> updateById(@Valid @RequestBody StudentWrapper studentWrapper, @PathVariable String rut) {
+	@PutMapping(value = "students/{rut}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<JSONObject>> updateById(@Valid @RequestBody StudentWrapper studentWrapper, @PathVariable String rut, @RequestHeader(value="Accept") String acceptHeader) {
 		try {
 			Student find = studenteRepo.findByRut(rut);
 			for (Student student : studentWrapper.getStudents()) {
@@ -89,8 +90,8 @@ public class StudentController {
 		return new ResponseEntity<List<JSONObject>>(HttpStatus.OK);
 	}
 	
-	@DeleteMapping(value = "students/{rut}")
-	public ResponseEntity<List<JSONObject>> deleteById(@Valid @PathVariable String rut) {
+	@DeleteMapping(value = "students/{rut}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<JSONObject>> deleteById(@Valid @PathVariable String rut, @RequestHeader(value="Accept") String acceptHeader) {
 		try {
 			Student find = studenteRepo.findByRut(rut);
 				if (null!= find){

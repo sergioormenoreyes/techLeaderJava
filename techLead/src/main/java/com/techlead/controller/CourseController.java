@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -38,13 +39,13 @@ public class CourseController {
 	CourseDao coursesRepo;
 	
 	@GetMapping(value = "courses", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Iterable<Course>> getAll() {
+	public ResponseEntity<Iterable<Course>> getAll( @RequestHeader(value="Accept") String acceptHeader) {
 		return new ResponseEntity<Iterable<Course>>(coursesRepo.findAll(), HttpStatus.OK);
 	}
 	
 
 	@GetMapping(value = "courses/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Course> getCourseId(@PathVariable Integer id) {
+	public ResponseEntity<Course> getCourseId(@PathVariable Integer id, @RequestHeader(value="Accept") String acceptHeader) {
 		Course rsp = coursesRepo.findById(id);
 		Optional<Course> opt = Optional.ofNullable(rsp);
 		if(!opt.isPresent()) {
@@ -53,8 +54,8 @@ public class CourseController {
 		return new ResponseEntity<Course>(rsp, HttpStatus.OK);
 	}	
 	
-	@PostMapping(value = "courses")
-	public ResponseEntity<List<JSONObject>> saveAll(@Valid @RequestBody CourseWrapper course) {
+	@PostMapping(value = "courses", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<JSONObject>> saveAll(@Valid @RequestBody CourseWrapper course, @RequestHeader(value="Accept") String acceptHeader) {
 		try {
 			//Stream.of(course).forEach(e, course -> coursesRepo.save(course));
 			for (Course person : course.getCourses()) {
@@ -68,8 +69,8 @@ public class CourseController {
 		return new ResponseEntity<List<JSONObject>>(HttpStatus.CREATED);
 	}
 	
-	@PutMapping(value = "courses/{id}")
-	public ResponseEntity<List<JSONObject>> updateById(@Valid @RequestBody CourseWrapper courseWrapper, @PathVariable Integer id) {
+	@PutMapping(value = "courses/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<JSONObject>> updateById(@Valid @RequestBody CourseWrapper courseWrapper, @PathVariable Integer id, @RequestHeader(value="Accept") String acceptHeader) {
 		try {
 			
 			Course find = coursesRepo.findById(id);
@@ -90,8 +91,8 @@ public class CourseController {
 		return new ResponseEntity<List<JSONObject>>(HttpStatus.OK);
 	}
 	
-	@DeleteMapping(value = "courses/{id}")
-	public ResponseEntity<List<JSONObject>> deleteById(@Valid  @PathVariable Integer id) {
+	@DeleteMapping(value = "courses/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<JSONObject>> deleteById(@Valid  @PathVariable Integer id, @RequestHeader(value="Accept") String acceptHeader) {
 		try {
 				Course find = coursesRepo.findById(id);
 				if (null != find){
