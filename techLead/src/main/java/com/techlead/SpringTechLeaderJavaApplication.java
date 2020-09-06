@@ -8,5 +8,6 @@ public class SpringTechLeaderJavaApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SpringTechLeaderJavaApplication.class, args);
+		
 	}
 }

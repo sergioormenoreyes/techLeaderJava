@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: devops-test
+  name: devops-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: devops-test
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: devops-test
+    spec:
+      containers:
+      - image: gcr.io/psyched-ceiling-286818/23people-devops-test:latest
+        name: 23people-devops-test
+        resources: {}
+status: {}
