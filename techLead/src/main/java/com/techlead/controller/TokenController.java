@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.techlead.config.Utils;
 import com.techlead.model.JwtRequest;
 import com.techlead.model.JwtResponse;
-import com.techlead.model.UserDTO;
+import com.techlead.model.UsersForToken;
 import com.techlead.service.DetailsService;
 
 @RestController
@@ -46,7 +46,7 @@ public class TokenController {
 	}
 	
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
-	public ResponseEntity<?> saveUser(@RequestBody UserDTO user) throws Exception {
+	public ResponseEntity<?> saveUser(@RequestBody UsersForToken user) throws Exception {
 		return ResponseEntity.ok(detailsService.save(user));
 	}
 
