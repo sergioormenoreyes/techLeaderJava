@@ -3,22 +3,22 @@ kind: Deployment
 metadata:
   creationTimestamp: null
   labels:
-    app: devops-test
-  name: devops-test
+    app: techleader-test
+  name: techleader-test
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: devops-test
+      app: techleader-test
   strategy: {}
   template:
     metadata:
       creationTimestamp: null
       labels:
-        app: devops-test
+        app: techleader-test
     spec:
       containers:
-      - image: gcr.io/psyched-ceiling-286818/23people-devops-test:latest
-        name: 23people-devops-test
+      - image: gcr.io/psyched-ceiling-286818/23people-techleader:latest
+        name: 23people-techleader
         resources: {}
 status: {}
